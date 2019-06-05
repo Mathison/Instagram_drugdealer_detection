@@ -257,6 +257,7 @@ def train_model(text_train_data,hashtag_train_data,train_label,vocab_list,text_k
     ###### Hashtag block
     hashtag_block = Sequential()
     hashtag_block.add(Embedding(len(vocab_list), 400, input_length = hash_keep_num))
+    hashtag_block.add(Flatten())
     hashtag_block.add(Dense(200, activation='sigmoid'))
     
     #####merge layer
