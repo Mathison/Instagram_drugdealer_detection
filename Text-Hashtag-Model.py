@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-
 from sklearn import svm
 import csv
 import os,sys,re
@@ -14,10 +8,6 @@ from sklearn.metrics import roc_auc_score
 from matplotlib import pyplot
 import matplotlib.pyplot as plt
 
-
-# In[ ]:
-
-
 def read_csv(filepath):
     csv_data = []
     with open(filepath,'r',encoding = 'utf-16') as csv_file:
@@ -25,10 +15,6 @@ def read_csv(filepath):
         for row in csv_reader:
             csv_data.append(' '.join(row))
     return csv_data
-
-
-# In[ ]:
-
 
 def clean(text):
 
@@ -64,10 +50,6 @@ def clean(text):
 
     return text
 
-
-# In[ ]:
-
-
 #########list_text already been split()
 def build_vocab(list_text):
     words_vocab = []
@@ -95,11 +77,8 @@ def read_vocab(vocab_path):
             return vocab
     #except:
         #print("can't open file" + vocab_path)
-
-
-# In[ ]:
-
-
+        
+        
 def write_index(text_list,vocab_list,input_path,keep_num):
     #vocab = read_vocab(vocab_path)
     vocab = vocab_list
@@ -138,9 +117,6 @@ def convert_index_to_vector(train_data,vocab_list,keep_num):
     return np.array(train_vec)
 
 
-# In[ ]:
-
-
 def get_average_length(drug_dealer,online,other):
     total_length = 0
     for text in drug_dealer:
@@ -154,10 +130,6 @@ def get_average_length(drug_dealer,online,other):
         
     return int(total_length/(len(drug_dealer)+len(online)+len(other)))
 
-
-# In[ ]:
-
-
 def plot_graph(train,vali,label):
     plt.plot(range(len(train)),train,label='train_'+label)
     plt.plot(range(len(vali)),vali,label='vali_'+label)
@@ -167,16 +139,9 @@ def plot_graph(train,vali,label):
         plt.legend(loc='lower right')
     plt.show()
 
-
-# In[ ]:
-
-
 def get_hashtag(text):
     hashtag = [tag for tag in text.replace('#',' #').split(' ') if tag.startswith("#")]
     return hashtag
-
-
-# In[ ]:
 
 
 def shuffle_data(test_index,test_label):
@@ -190,15 +155,9 @@ def shuffle_data(test_index,test_label):
 
 # ## Create training testing set
 
-# In[ ]:
-
-
 #./data/combined_result.csv is the nlink we store our total data set
 total_data = read_csv('./data/combined_result.csv')
 test_data = [t.split('\t') for t in total_data]
-
-
-# In[ ]:
 
 
 test_label = [int(t[2]) for t in test_data[1:]]
@@ -212,22 +171,17 @@ text_list = [clean(t[0]) for t in test_data[1:]]
 hashtag_list = [' '.join(get_hashtag(t[0])) for t in test_data[1:]]
 
 
-# In[ ]:
 
 
 vocab_list = build_vocab(test_list)
 write_vocab(vocab_list,'test_vocab.txt')
 
 
-# In[ ]:
-
 
 total_index = write_index(test_list,vocab_list,'test_data.txt',50)
-text_index = write_index(text_list,vocab_list,'textt_data.txt',50)
+text_index = write_index(text_list,vocab_list,'text_data.txt',50)
 hashtag_index = write_index(hashtag_list,vocab_list,'hashtag_data.txt',15)
 
-
-# In[ ]:
 
 
 import keras
@@ -238,8 +192,6 @@ from keras.layers import Dense, Flatten, LSTM, Conv1D, MaxPooling1D, Dropout, Ac
 from keras.layers.embeddings import Embedding
 from keras.utils.vis_utils import plot_model
 
-
-# In[ ]:
 
 
 def train_model(text_train_data,hashtag_train_data,train_label,vocab_list,text_keep_num,hashtag_keep_num):    
@@ -269,10 +221,6 @@ def train_model(text_train_data,hashtag_train_data,train_label,vocab_list,text_k
     history = merged.fit([np.array(text_train_data),np.array(hashtag_train_data)], np.array(train_label), validation_split=0.3, epochs=30,shuffle=True)
     
     return merged
-
-
-# In[ ]:
-
 
 lstm_result = []
 lstm_acc_result = []
@@ -355,13 +303,7 @@ for count in range(10):
     print('Finish '+str(count))
 
 
-# In[ ]:
-
-
 clf.save('new_instagram_model.h5')
-
-
-# In[ ]:
 
 
 avg_tp = 0
